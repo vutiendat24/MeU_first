@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+/* import tailwindcss from '@tailwindcss/vite' */
 /* Optional custom styles */
 body {
   font-family: 'Inter', sans-serif;
