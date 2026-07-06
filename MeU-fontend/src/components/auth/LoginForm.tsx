@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { authService } from '../../services/auth.service';
 
 const LoginForm: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -24,22 +25,12 @@ const LoginForm: React.FC = () => {
         setError(null);
 
         try {
-            // TODO: Gắn API login của Backend vào đây. Lưu ý Backend cần thay đổi nhận 'username' thay vì 'email'
-            // const response = await fetch('http://localhost:8000/auth/login', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ username: formData.username, password: formData.password })
-            // });
-            // if (!response.ok) throw new Error('Đăng nhập thất bại');
-            // const data = await response.json();
-            // localStorage.setItem('token', data.access_token);
-            // window.location.href = '/'; 
-            
-            console.log('Login data:', formData);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            alert('Đăng nhập thành công! (Mock)');
+            const data = await authService.login(formData);
+            localStorage.setItem('access_token', data.access_token);
+            alert('Đăng nhập thành công!');
+            window.location.href = '/'; 
         } catch (err: any) {
-            setError(err.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
+            setError(err.response?.data?.message || err.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
         } finally {
             setIsLoading(false);
         }
