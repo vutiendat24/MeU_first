@@ -15,7 +15,7 @@ export class AuthService {
   ) { }
 
   async register(registerUserDto: RegisterUserDto) {
-    const { name, username, email, password, dob, gender, address } = registerUserDto;
+    const { name, username, email, password, gender, address } = registerUserDto;
 
     const existingUser = await this.userModel.findOne({
       $or: [{ email }, { username }],
@@ -31,7 +31,6 @@ export class AuthService {
       username,
       email,
       password: hashedPassword,
-      dob,
       gender,
       address,
     });
@@ -46,7 +45,6 @@ export class AuthService {
         name: newUser.name,
         username: newUser.username,
         email: newUser.email,
-        dob: newUser.dob,
         gender: newUser.gender,
         address: newUser.address,
       },
@@ -80,7 +78,6 @@ export class AuthService {
         name: user.name,
         username: user.username,
         email: user.email,
-        dob: user.dob,
         gender: user.gender,
         address: user.address,
       },

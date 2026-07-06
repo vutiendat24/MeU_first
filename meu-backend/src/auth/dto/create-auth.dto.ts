@@ -16,8 +16,6 @@ export class RegisterUserDto {
   @IsNotEmpty({ message: 'Password should not be empty!' })
   password: string;
 
-  @IsNotEmpty({ message: 'Date of birth should not be empty!' })
-  dob: string;
 
   @IsNotEmpty({ message: 'Gender should not be empty!' })
   gender: string;

@@ -7,7 +7,6 @@ const RegisterForm: React.FC = () => {
         username: '',
         email: '',
         gender: 'male',
-        dob: '',
         address: '',
         password: '',
         confirmPassword: '',
@@ -123,7 +122,7 @@ const RegisterForm: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-4">
                             <div className="flex flex-col gap-1">
                                 <label className="font-semibold text-sm text-gray-800">Giới tính</label>
                                 <div className="flex items-center gap-4 h-12 px-1">
@@ -150,18 +149,6 @@ const RegisterForm: React.FC = () => {
                                         <span className="text-gray-600 group-hover:text-blue-600 transition-colors">Nữ</span>
                                     </label>
                                 </div>
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <label className="font-semibold text-sm text-gray-800" htmlFor="dob">Ngày sinh</label>
-                                <input 
-                                    className="w-full h-12 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" 
-                                    id="dob" 
-                                    name="dob" 
-                                    required 
-                                    type="date"
-                                    value={formData.dob}
-                                    onChange={handleChange}
-                                />
                             </div>
                         </div>
 
