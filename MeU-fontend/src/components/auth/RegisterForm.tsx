@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { authService } from '../../services/auth.service';
 
 const RegisterForm: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -35,23 +36,11 @@ const RegisterForm: React.FC = () => {
                 return;
             }
 
-            // Lọc bỏ trường confirmPassword để không bị lỗi forbidNonWhitelisted ở Backend
-            const { confirmPassword, ...registerPayload } = formData;
-
-            const response = await fetch('http://localhost:8000/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(registerPayload)
-            });
-            const data = await response.json();
-            if (!response.ok) {
-                const errMsg = Array.isArray(data.message) ? data.message[0] : (data.message || 'Đăng ký thất bại');
-                throw new Error(errMsg);
-            }
+            await authService.register(formData);
             alert('Đăng ký thành công! Hãy đăng nhập.');
             window.location.href = '/login'; 
         } catch (err: any) {
-            setError(err.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+            setError(err.response?.data?.message || err.message || 'Đăng ký thất bại. Vui lòng thử lại.');
         } finally {
             setIsLoading(false);
         }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { authService } from '../../services/auth.service';
 
 const LoginForm: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -24,21 +25,12 @@ const LoginForm: React.FC = () => {
         setError(null);
 
         try {
-            const response = await fetch('http://localhost:8000/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: formData.username, password: formData.password })
-            });
-            const data = await response.json();
-            if (!response.ok) {
-                const errMsg = Array.isArray(data.message) ? data.message[0] : (data.message || 'Đăng nhập thất bại');
-                throw new Error(errMsg);
-            }
-            localStorage.setItem('token', data.access_token);
-            alert('Đăng nhập thành công!');
+            const data = await authService.login(formData);
+            localStorage.setItem('access_token', data.access_token);
+            alert(`Chào mừng ${data.user.username}!`);
             window.location.href = '/'; 
         } catch (err: any) {
-            setError(err.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
+            setError(err.response?.data?.message || err.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
         } finally {
             setIsLoading(false);
         }
