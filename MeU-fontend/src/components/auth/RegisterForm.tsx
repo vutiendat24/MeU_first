@@ -8,6 +8,7 @@ const RegisterForm: React.FC = () => {
         email: '',
         gender: 'male',
         dob: '',
+        address: '',
         password: '',
         confirmPassword: '',
     });
@@ -75,6 +76,20 @@ const RegisterForm: React.FC = () => {
                                 required 
                                 type="text"
                                 value={formData.name}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                            <label className="font-semibold text-sm text-gray-800" htmlFor="address">Địa chỉ</label>
+                            <input 
+                                className="w-full h-12 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" 
+                                id="address" 
+                                name="address" 
+                                placeholder="123 Đường ABC, Quận X..." 
+                                required 
+                                type="text"
+                                value={formData.address}
                                 onChange={handleChange}
                             />
                         </div>
