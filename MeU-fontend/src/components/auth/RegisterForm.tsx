@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { authService } from '../../services/auth.service';
 
 const RegisterForm: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -35,21 +36,11 @@ const RegisterForm: React.FC = () => {
                 return;
             }
 
-            // TODO: Gắn API register của Backend vào đây
-            // const response = await fetch('http://localhost:8000/auth/register', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(formData)
-            // });
-            // if (!response.ok) throw new Error('Đăng ký thất bại');
-            // alert('Đăng ký thành công! Hãy đăng nhập.');
-            // window.location.href = '/login'; 
-            
-            console.log('Register data:', formData);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            alert('Đăng ký thành công! (Mock)');
+            await authService.register(formData);
+            alert('Đăng ký thành công! Hãy đăng nhập.');
+            window.location.href = '/login'; 
         } catch (err: any) {
-            setError(err.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+            setError(err.response?.data?.message || err.message || 'Đăng ký thất bại. Vui lòng thử lại.');
         } finally {
             setIsLoading(false);
         }
