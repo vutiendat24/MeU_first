@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Khởi tạo một instance của axios
 const api = axios.create({
-    baseURL: 'http://localhost:8000', // Sửa URL này khi Backend deploy lên thật
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
     headers: {
         'Content-Type': 'application/json',
     },
