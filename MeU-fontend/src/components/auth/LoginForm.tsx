@@ -27,11 +27,8 @@ const LoginForm: React.FC = () => {
         try {
             const data = await authService.login(formData);
             localStorage.setItem('access_token', data.access_token);
-<<<<<<< HEAD
             alert(`Chào mừng ${data.user.username}!`);
-=======
             localStorage.setItem('user', JSON.stringify(data.user));
->>>>>>> 78bfc7099711db40c970089f6ccbe5a286106286
             window.location.href = '/'; 
         } catch (err: any) {
             setError(err.response?.data?.message || err.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
