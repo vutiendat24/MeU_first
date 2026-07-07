@@ -16,7 +16,7 @@ export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async register(registerUserDto: RegisterUserDto) {
     const { name, username, email, password, gender, address } =
@@ -79,10 +79,7 @@ export class AuthService {
   async login(loginUserDto: LoginUserDto) {
     const { username, password } = loginUserDto;
 
-    const escapedIdentifier = username.replace(
-      /[-\/\\^$*+?.()|[\]{}]/g,
-      '\\$&',
-    );
+    const escapedIdentifier = username.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
     const user = await this.userModel.findOne({
       $or: [
         { email: { $regex: new RegExp(`^${escapedIdentifier}$`, 'i') } },

@@ -18,9 +18,6 @@ export class User {
   password: string;
 
   @Prop({ required: true })
-  dob: string;
-
-  @Prop({ required: true })
   gender: string;
 
   @Prop({ required: true, trim: true })
