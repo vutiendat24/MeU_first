@@ -28,12 +28,11 @@ export class RegisterUserDto {
   @IsNotEmpty({ message: 'Password should not be empty!' })
   password: string;
 
-<<<<<<< Updated upstream
+
   @IsNotEmpty({ message: 'Date of birth should not be empty!' })
   dob: string;
 
-=======
->>>>>>> Stashed changes
+
   @IsNotEmpty({ message: 'Gender should not be empty!' })
   @IsIn(['male', 'female', 'other'], {
     message: 'Gender must be male, female, or other!',
