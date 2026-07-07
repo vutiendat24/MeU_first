@@ -31,6 +31,12 @@ const RegisterForm: React.FC = () => {
         setError(null);
 
         try {
+            if (formData.password.length < 6) {
+                setError('Mật khẩu phải chứa ít nhất 6 ký tự!');
+                setIsLoading(false);
+                return;
+            }
+
             if (formData.password !== formData.confirmPassword) {
                 setError('Mật khẩu xác nhận không khớp!');
                 setIsLoading(false);

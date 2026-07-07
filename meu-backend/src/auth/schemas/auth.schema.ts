@@ -8,23 +8,26 @@ export class User {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true, unique: true, lowercase: true, trim: true })
+  @Prop({ required: true, unique: true, trim: true })
   email: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true, trim: true })
   username: string;
 
   @Prop({ required: true })
   password: string;
 
+<<<<<<< Updated upstream
   @Prop({ required: true })
   dob: string;
 
+=======
+>>>>>>> Stashed changes
   @Prop({ required: true })
   gender: string;
 
-  @Prop()
-  address?: string;
+  @Prop({ required: true, trim: true })
+  address: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

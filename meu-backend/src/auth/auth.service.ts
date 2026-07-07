@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/auth.schema';
@@ -12,16 +16,27 @@ export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async register(registerUserDto: RegisterUserDto) {
+<<<<<<< Updated upstream
     const { name, username, email, password, dob, gender, address } = registerUserDto;
+=======
+    const { name, username, email, password, gender, address } =
+      registerUserDto;
+>>>>>>> Stashed changes
 
+    const escapedEmail = email.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
     const existingUser = await this.userModel.findOne({
-      $or: [{ email }, { username }],
+      $or: [
+        { email: { $regex: new RegExp(`^${escapedEmail}$`, 'i') } },
+        { username },
+      ],
     });
     if (existingUser) {
-      throw new ConflictException('Email address or username is already registered!');
+      throw new ConflictException(
+        'Email address or username is already registered!',
+      );
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -36,7 +51,21 @@ export class AuthService {
       address,
     });
 
-    await newUser.save();
+    try {
+      await newUser.save();
+    } catch (error) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        (error as { code: unknown }).code === 11000
+      ) {
+        throw new ConflictException(
+          'Email address or username is already registered!',
+        );
+      }
+      throw error;
+    }
 
     return {
       statusCode: 201,
@@ -56,8 +85,12 @@ export class AuthService {
   async login(loginUserDto: LoginUserDto) {
     const { username, password } = loginUserDto;
 
+    const escapedIdentifier = username.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
     const user = await this.userModel.findOne({
-      $or: [{ email: username }, { username: username }],
+      $or: [
+        { email: { $regex: new RegExp(`^${escapedIdentifier}$`, 'i') } },
+        { username: username },
+      ],
     });
     if (!user) {
       throw new UnauthorizedException('Invalid username or password!');

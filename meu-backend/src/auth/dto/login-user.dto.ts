@@ -1,9 +1,14 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, MinLength } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class LoginUserDto {
   @IsNotEmpty({ message: 'Username should not be empty!' })
+  @Transform(({ value }): unknown =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   username: string;
 
+  @MinLength(6, { message: 'Password must be at least 6 characters long!' })
   @IsNotEmpty({ message: 'Password should not be empty!' })
   password: string;
 }
