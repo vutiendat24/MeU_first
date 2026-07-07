@@ -17,13 +17,13 @@ export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(registerUserDto: RegisterUserDto) {
     const { name, username, email, password, dob, gender, address } =
       registerUserDto;
 
-    // Kiểm tra tuổi hợp lệ (phải trên 13 tuổi)
+    // Kiểm tra tuổi hợp lệ
     const birthDate = new Date(dob);
     const today = new Date();
     const age = today.getFullYear() - birthDate.getFullYear();
@@ -32,15 +32,16 @@ export class AuthService {
       monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())
         ? age - 1
         : age;
-
+    const MIN_AGE= 18;
+    const MAX_AGE= 120;
     if (birthDate > today) {
       throw new BadRequestException('Ngày sinh không thể là ngày trong tương lai!');
     }
-    if (actualAge < 13) {
-      throw new BadRequestException('Bạn phải đủ 13 tuổi để đăng ký!');
+    if (actualAge < MIN_AGE) {
+      throw new BadRequestException(`Bạn phải đủ ${MIN_AGE} tuổi để đăng ký!`);
     }
-    if (actualAge > 120) {
-      throw new BadRequestException('Ngày sinh không hợp lệ!');
+    if (actualAge > MAX_AGE) {
+      throw new BadRequestException(`Bạn không được quá ${MAX_AGE} tuổi để đăng ký!`);
     }
 
     // Kiểm tra email và username đã tồn tại chưa

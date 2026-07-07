@@ -28,7 +28,7 @@ interface FieldErrors {
 const validateName = (v: string) => {
   if (!v.trim()) return 'Họ và tên không được để trống!';
   if (v.trim().length < 2) return 'Họ và tên phải có ít nhất 2 ký tự!';
-  if (v.trim().length > 100) return 'Họ và tên không được vượt quá 100 ký tự!';
+  if (v.trim().length > 50) return 'Họ và tên không được vượt quá 50 ký tự!';
   return undefined;
 };
 
@@ -68,16 +68,18 @@ const validateDob = (v: string) => {
   if (!v) return 'Ngày sinh không được để trống!';
   const birth = new Date(v);
   const today = new Date();
+  const  MIN_AGE= 18;
+  const  MAX_AGE= 120;
   if (birth > today) return 'Ngày sinh không thể là ngày trong tương lai!';
   const age =
     today.getFullYear() -
     birth.getFullYear() -
     (today.getMonth() < birth.getMonth() ||
-    (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
+      (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
       ? 1
       : 0);
-  if (age < 13) return 'Bạn phải đủ 13 tuổi để đăng ký!';
-  if (age > 120) return 'Ngày sinh không hợp lệ!';
+  if (age < MIN_AGE) return `Bạn phải đủ ${MIN_AGE} tuổi để đăng ký!`;
+  if (age > MAX_AGE) return `Bạn không được quá ${MAX_AGE} tuổi để đăng ký!`;
   return undefined;
 };
 
@@ -251,10 +253,9 @@ const RegisterForm: React.FC = () => {
   };
 
   const inputClass = (field: keyof FieldErrors) =>
-    `w-full h-11 px-4 rounded-xl border transition-all outline-none text-sm ${
-      touched[field] && fieldErrors[field]
-        ? 'border-red-400 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-        : touched[field] && !fieldErrors[field]
+    `w-full h-11 px-4 rounded-xl border transition-all outline-none text-sm ${touched[field] && fieldErrors[field]
+      ? 'border-red-400 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+      : touched[field] && !fieldErrors[field]
         ? 'border-green-400 bg-green-50 focus:border-green-500 focus:ring-2 focus:ring-green-200'
         : 'border-gray-300 bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200'
     }`;
