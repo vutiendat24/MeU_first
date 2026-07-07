@@ -1,4 +1,9 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/auth.schema';
@@ -12,16 +17,41 @@ export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async register(registerUserDto: RegisterUserDto) {
-    const { name, username, email, password, dob, gender, address } = registerUserDto;
+    const { name, username, email, password, dob, gender, address } =
+      registerUserDto;
 
-    const existingUser = await this.userModel.findOne({
-      $or: [{ email }, { username }],
-    });
-    if (existingUser) {
-      throw new ConflictException('Email address or username is already registered!');
+    // Kiểm tra tuổi hợp lệ (phải trên 13 tuổi)
+    const birthDate = new Date(dob);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    const actualAge =
+      monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ? age - 1
+        : age;
+
+    if (birthDate > today) {
+      throw new BadRequestException('Ngày sinh không thể là ngày trong tương lai!');
+    }
+    if (actualAge < 13) {
+      throw new BadRequestException('Bạn phải đủ 13 tuổi để đăng ký!');
+    }
+    if (actualAge > 120) {
+      throw new BadRequestException('Ngày sinh không hợp lệ!');
+    }
+
+    // Kiểm tra email và username đã tồn tại chưa
+    const existingEmail = await this.userModel.findOne({ email });
+    if (existingEmail) {
+      throw new ConflictException('Email này đã được đăng ký, vui lòng dùng email khác!');
+    }
+
+    const existingUsername = await this.userModel.findOne({ username });
+    if (existingUsername) {
+      throw new ConflictException('Tên đăng nhập này đã tồn tại, vui lòng chọn tên khác!');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -40,7 +70,7 @@ export class AuthService {
 
     return {
       statusCode: 201,
-      message: 'User registered successfully!',
+      message: 'Đăng ký tài khoản thành công!',
       user: {
         id: newUser._id,
         name: newUser.name,
@@ -58,20 +88,20 @@ export class AuthService {
 
     const user = await this.userModel.findOne({ username });
     if (!user) {
-      throw new UnauthorizedException('Invalid username or password!');
+      throw new UnauthorizedException('Tên đăng nhập hoặc mật khẩu không chính xác!');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid username or password!');
+      throw new UnauthorizedException('Tên đăng nhập hoặc mật khẩu không chính xác!');
     }
 
-    const payload = { sub: user._id, email: user.email };
+    const payload = { sub: user._id, username: user.username, email: user.email };
     const access_token = await this.jwtService.signAsync(payload);
 
     return {
       statusCode: 200,
-      message: 'Login successful!',
+      message: 'Đăng nhập thành công!',
       access_token,
       user: {
         id: user._id,

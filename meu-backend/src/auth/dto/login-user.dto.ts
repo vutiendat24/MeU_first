@@ -1,9 +1,13 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
 export class LoginUserDto {
-  @IsNotEmpty({ message: 'Username should not be empty!' })
+  @IsString({ message: 'Tên đăng nhập phải là chuỗi ký tự!' })
+  @IsNotEmpty({ message: 'Tên đăng nhập không được để trống!' })
+  @MaxLength(30, { message: 'Tên đăng nhập không hợp lệ!' })
   username: string;
 
-  @IsNotEmpty({ message: 'Password should not be empty!' })
+  @IsString({ message: 'Mật khẩu phải là chuỗi ký tự!' })
+  @IsNotEmpty({ message: 'Mật khẩu không được để trống!' })
+  @MaxLength(64, { message: 'Mật khẩu không hợp lệ!' })
   password: string;
 }
