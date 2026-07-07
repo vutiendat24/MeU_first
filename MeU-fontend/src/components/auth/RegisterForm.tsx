@@ -29,23 +29,59 @@ const RegisterForm: React.FC = () => {
         let errorMsg = '';
         switch (name) {
             case 'name':
-                if (!value.trim()) errorMsg = 'Họ và tên không được để trống';
+                if (!value.trim()) {
+                    errorMsg = 'Họ và tên không được để trống';
+                } else if (value.trim().length < 2) {
+                    errorMsg = 'Họ và tên phải có ít nhất 2 ký tự';
+                } else if (value.trim().length > 50) {
+                    errorMsg = 'Họ và tên không được vượt quá 50 ký tự';
+                } else if (!/^[\p{L}\s]+$/u.test(value.trim())) {
+                    errorMsg = 'Họ và tên chỉ được chứa chữ cái và khoảng trắng';
+                }
                 break;
             case 'address':
-                if (!value.trim()) errorMsg = 'Địa chỉ không được để trống';
+                if (!value.trim()) {
+                    errorMsg = 'Địa chỉ không được để trống';
+                } else if (value.trim().length > 255) {
+                    errorMsg = 'Địa chỉ không được vượt quá 255 ký tự';
+                }
                 break;
             case 'username':
-                if (value.trim().length < 3) errorMsg = 'Tên đăng nhập phải có ít nhất 3 ký tự';
+                if (!value.trim()) {
+                    errorMsg = 'Tên đăng nhập không được để trống';
+                } else if (value.trim().length < 3) {
+                    errorMsg = 'Tên đăng nhập phải có ít nhất 3 ký tự';
+                } else if (value.trim().length > 50) {
+                    errorMsg = 'Tên đăng nhập không được vượt quá 50 ký tự';
+                } else if (!/^[a-zA-Z0-9_]+$/.test(value.trim())) {
+                    errorMsg = 'Tên đăng nhập chỉ được chứa không dấu, số và dấu gạch dưới';
+                }
                 break;
             case 'email':
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(value)) errorMsg = 'Email không hợp lệ';
+                if (!value.trim()) {
+                    errorMsg = 'Email không được để trống';
+                } else if (!emailRegex.test(value.trim())) {
+                    errorMsg = 'Email không hợp lệ';
+                } else if (value.trim().length > 255) {
+                    errorMsg = 'Email không được vượt quá 255 ký tự';
+                }
                 break;
             case 'password':
-                if (value.length < 6) errorMsg = 'Mật khẩu phải có ít nhất 6 ký tự';
+                if (!value) {
+                    errorMsg = 'Mật khẩu không được để trống';
+                } else if (value.length < 6) {
+                    errorMsg = 'Mật khẩu phải có ít nhất 6 ký tự';
+                } else if (value.length > 128) {
+                    errorMsg = 'Mật khẩu không được vượt quá 128 ký tự';
+                }
                 break;
             case 'confirmPassword':
-                if (value !== formData.password) errorMsg = 'Mật khẩu xác nhận không khớp!';
+                if (!value) {
+                    errorMsg = 'Vui lòng xác nhận mật khẩu';
+                } else if (value !== formData.password) {
+                    errorMsg = 'Mật khẩu xác nhận không khớp!';
+                }
                 break;
         }
         setErrors(prev => ({ ...prev, [name]: errorMsg }));
