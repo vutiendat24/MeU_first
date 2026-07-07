@@ -1,7 +1,7 @@
 import { IsEmail, IsNotEmpty, MinLength, IsIn } from 'class-validator';
 import { Transform } from 'class-transformer';
 
-export class CreateAuthDto {}
+export class CreateAuthDto { }
 
 export class RegisterUserDto {
   @IsNotEmpty({ message: 'Name should not be empty!' })

@@ -17,12 +17,9 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-<<<<<<< Updated upstream
   @Prop({ required: true })
   dob: string;
 
-=======
->>>>>>> Stashed changes
   @Prop({ required: true })
   gender: string;
 
