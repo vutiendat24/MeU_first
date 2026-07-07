@@ -15,6 +15,7 @@ const RegisterForm: React.FC = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -24,18 +25,57 @@ const RegisterForm: React.FC = () => {
         }));
     };
 
+    const validateField = (name: string, value: string) => {
+        let errorMsg = '';
+        switch (name) {
+            case 'name':
+                if (!value.trim()) errorMsg = 'Họ và tên không được để trống';
+                break;
+            case 'address':
+                if (!value.trim()) errorMsg = 'Địa chỉ không được để trống';
+                break;
+            case 'username':
+                if (value.trim().length < 3) errorMsg = 'Tên đăng nhập phải có ít nhất 3 ký tự';
+                break;
+            case 'email':
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) errorMsg = 'Email không hợp lệ';
+                break;
+            case 'password':
+                if (value.length < 6) errorMsg = 'Mật khẩu phải có ít nhất 6 ký tự';
+                break;
+            case 'confirmPassword':
+                if (value !== formData.password) errorMsg = 'Mật khẩu xác nhận không khớp!';
+                break;
+        }
+        setErrors(prev => ({ ...prev, [name]: errorMsg }));
+        return errorMsg === '';
+    };
+
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        validateField(name, value);
+    };
+
+    const validateForm = () => {
+        const isNameValid = validateField('name', formData.name);
+        const isAddressValid = validateField('address', formData.address);
+        const isUsernameValid = validateField('username', formData.username);
+        const isEmailValid = validateField('email', formData.email);
+        const isPasswordValid = validateField('password', formData.password);
+        const isConfirmPasswordValid = validateField('confirmPassword', formData.confirmPassword);
+        return isNameValid && isAddressValid && isUsernameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
         setError(null);
+        
+        if (!validateForm()) return;
+
+        setIsLoading(true);
 
         try {
-            if (formData.password !== formData.confirmPassword) {
-                setError('Mật khẩu xác nhận không khớp!');
-                setIsLoading(false);
-                return;
-            }
-
             await authService.register(formData);
             alert('Đăng ký thành công! Hãy đăng nhập.');
             window.location.href = '/login'; 
@@ -68,7 +108,7 @@ const RegisterForm: React.FC = () => {
                         <div className="flex flex-col gap-1">
                             <label className="font-semibold text-sm text-gray-800" htmlFor="name">Họ và tên</label>
                             <input 
-                                className="w-full h-12 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" 
+                                className={`w-full h-12 px-4 bg-white border rounded-lg focus:ring-2 focus:ring-blue-500/20 transition-all ${errors.name ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'}`}
                                 id="name" 
                                 name="name" 
                                 placeholder="Nguyễn Văn A" 
@@ -76,13 +116,15 @@ const RegisterForm: React.FC = () => {
                                 type="text"
                                 value={formData.name}
                                 onChange={handleChange}
+                                onBlur={handleBlur}
                             />
+                            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                         </div>
 
                         <div className="flex flex-col gap-1">
                             <label className="font-semibold text-sm text-gray-800" htmlFor="address">Địa chỉ</label>
                             <input 
-                                className="w-full h-12 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" 
+                                className={`w-full h-12 px-4 bg-white border rounded-lg focus:ring-2 focus:ring-blue-500/20 transition-all ${errors.address ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'}`}
                                 id="address" 
                                 name="address" 
                                 placeholder="123 Đường ABC, Quận X..." 
@@ -90,14 +132,16 @@ const RegisterForm: React.FC = () => {
                                 type="text"
                                 value={formData.address}
                                 onChange={handleChange}
+                                onBlur={handleBlur}
                             />
+                            {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="flex flex-col gap-1">
                                 <label className="font-semibold text-sm text-gray-800" htmlFor="username">Tên đăng nhập</label>
                                 <input 
-                                    className="w-full h-12 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" 
+                                    className={`w-full h-12 px-4 bg-white border rounded-lg focus:ring-2 focus:ring-blue-500/20 transition-all ${errors.username ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'}`}
                                     id="username" 
                                     name="username" 
                                     placeholder="user123" 
@@ -105,12 +149,14 @@ const RegisterForm: React.FC = () => {
                                     type="text"
                                     value={formData.username}
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                 />
+                                {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
                             </div>
                             <div className="flex flex-col gap-1">
                                 <label className="font-semibold text-sm text-gray-800" htmlFor="email">Email</label>
                                 <input 
-                                    className="w-full h-12 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" 
+                                    className={`w-full h-12 px-4 bg-white border rounded-lg focus:ring-2 focus:ring-blue-500/20 transition-all ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'}`}
                                     id="email" 
                                     name="email" 
                                     placeholder="vi-du@email.com" 
@@ -118,7 +164,9 @@ const RegisterForm: React.FC = () => {
                                     type="email"
                                     value={formData.email}
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                 />
+                                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                             </div>
                         </div>
 
@@ -157,7 +205,7 @@ const RegisterForm: React.FC = () => {
                                 <label className="font-semibold text-sm text-gray-800" htmlFor="password">Mật khẩu</label>
                                 <div className="relative">
                                     <input 
-                                        className="w-full h-12 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" 
+                                        className={`w-full h-12 px-4 bg-white border rounded-lg focus:ring-2 focus:ring-blue-500/20 transition-all ${errors.password ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'}`}
                                         id="password" 
                                         name="password" 
                                         placeholder="••••••••" 
@@ -165,6 +213,7 @@ const RegisterForm: React.FC = () => {
                                         type={showPassword ? 'text' : 'password'}
                                         value={formData.password}
                                         onChange={handleChange}
+                                        onBlur={handleBlur}
                                     />
                                     <button 
                                         className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600 transition-colors text-sm font-semibold" 
@@ -174,13 +223,14 @@ const RegisterForm: React.FC = () => {
                                         {showPassword ? 'Ẩn' : 'Hiện'}
                                     </button>
                                 </div>
+                                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                             </div>
 
                             <div className="flex flex-col gap-1">
                                 <label className="font-semibold text-sm text-gray-800" htmlFor="confirmPassword">Xác nhận mật khẩu</label>
                                 <div className="relative">
                                     <input 
-                                        className="w-full h-12 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" 
+                                        className={`w-full h-12 px-4 bg-white border rounded-lg focus:ring-2 focus:ring-blue-500/20 transition-all ${errors.confirmPassword ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'}`}
                                         id="confirmPassword" 
                                         name="confirmPassword" 
                                         placeholder="••••••••" 
@@ -188,6 +238,7 @@ const RegisterForm: React.FC = () => {
                                         type={showConfirmPassword ? 'text' : 'password'}
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
+                                        onBlur={handleBlur}
                                     />
                                     <button 
                                         className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600 transition-colors text-sm font-semibold" 
@@ -197,6 +248,7 @@ const RegisterForm: React.FC = () => {
                                         {showConfirmPassword ? 'Ẩn' : 'Hiện'}
                                     </button>
                                 </div>
+                                {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
                             </div>
                         </div>
 

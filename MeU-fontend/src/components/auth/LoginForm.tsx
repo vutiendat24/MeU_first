@@ -10,6 +10,7 @@ const LoginForm: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [errors, setErrors] = useState<{username?: string, password?: string}>({});
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
@@ -19,10 +20,36 @@ const LoginForm: React.FC = () => {
         }));
     };
 
+    const validateField = (name: string, value: string) => {
+        let errorMsg = '';
+        if (name === 'username' && !value.trim()) {
+            errorMsg = 'Tên đăng nhập không được để trống';
+        }
+        if (name === 'password' && value.length < 6) {
+            errorMsg = 'Mật khẩu phải có ít nhất 6 ký tự';
+        }
+        setErrors(prev => ({ ...prev, [name]: errorMsg }));
+        return errorMsg === '';
+    };
+
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        validateField(name, value);
+    };
+
+    const validateForm = () => {
+        const isUsernameValid = validateField('username', formData.username);
+        const isPasswordValid = validateField('password', formData.password);
+        return isUsernameValid && isPasswordValid;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
         setError(null);
+        
+        if (!validateForm()) return;
+
+        setIsLoading(true);
 
         try {
             const data = await authService.login(formData);
@@ -69,7 +96,7 @@ const LoginForm: React.FC = () => {
                                 Tên đăng nhập
                             </label>
                             <input 
-                                className="w-full h-12 px-4 rounded-lg border border-gray-300 bg-white/50 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none" 
+                                className={`w-full h-12 px-4 rounded-lg border bg-white/50 focus:bg-white focus:ring-1 transition-all outline-none ${errors.username ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'}`}
                                 id="username" 
                                 name="username" 
                                 placeholder="Nhập tên người dùng" 
@@ -77,7 +104,9 @@ const LoginForm: React.FC = () => {
                                 type="text"
                                 value={formData.username}
                                 onChange={handleChange}
+                                onBlur={handleBlur}
                             />
+                            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
                         </div>
 
                         <div className="space-y-1">
@@ -86,7 +115,7 @@ const LoginForm: React.FC = () => {
                             </label>
                             <div className="relative">
                                 <input 
-                                    className="w-full h-12 px-4 rounded-lg border border-gray-300 bg-white/50 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none" 
+                                    className={`w-full h-12 px-4 rounded-lg border bg-white/50 focus:bg-white focus:ring-1 transition-all outline-none ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'}`}
                                     id="password" 
                                     name="password" 
                                     placeholder="Nhập mật khẩu" 
@@ -94,6 +123,7 @@ const LoginForm: React.FC = () => {
                                     type={showPassword ? 'text' : 'password'}
                                     value={formData.password}
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                 />
                                 <button 
                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-500 transition-colors text-sm font-semibold" 
@@ -103,6 +133,7 @@ const LoginForm: React.FC = () => {
                                     {showPassword ? 'Ẩn' : 'Hiện'}
                                 </button>
                             </div>
+                            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                         </div>
 
                         <div className="flex items-center justify-between pt-2">
