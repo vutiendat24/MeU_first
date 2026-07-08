@@ -262,8 +262,8 @@ const ComingSoon: React.FC = () => {
                     padding: '16px 18px', fontSize: 17, color: '#fff', outline: 'none',
                     transition: 'border-color .2s',
                   }}
-                  onFocus={e => { if (!errors.name) e.target.style.borderColor = '#ba7a48'; }}
-                  onMouseLeave={e => { if (!errors.name && document.activeElement !== e.target) e.target.style.borderColor = '#2a2a2a'; }}
+                  onFocus={e => { if (!errors.name) e.currentTarget.style.borderColor = '#ba7a48'; }}
+                  onMouseLeave={e => { if (!errors.name && document.activeElement !== e.target) e.currentTarget.style.borderColor = '#2a2a2a'; }}
                 />
                 {errors.name && (
                   <p style={{ color: '#e65c5c', fontSize: 13, marginTop: 6, fontWeight: 500 }}>
@@ -292,8 +292,8 @@ const ComingSoon: React.FC = () => {
                     padding: '16px 18px', fontSize: 17, color: '#fff', outline: 'none',
                     transition: 'border-color .2s',
                   }}
-                  onFocus={e => { if (!errors.email) e.target.style.borderColor = '#ba7a48'; }}
-                  onMouseLeave={e => { if (!errors.email && document.activeElement !== e.target) e.target.style.borderColor = '#2a2a2a'; }}
+                  onFocus={e => { if (!errors.email) e.currentTarget.style.borderColor = '#ba7a48'; }}
+                  onMouseLeave={e => { if (!errors.email && document.activeElement !== e.target) e.currentTarget.style.borderColor = '#2a2a2a'; }}
                 />
                 {errors.email && (
                   <p style={{ color: '#e65c5c', fontSize: 13, marginTop: 6, fontWeight: 500 }}>
