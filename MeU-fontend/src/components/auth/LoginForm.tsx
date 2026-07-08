@@ -121,7 +121,7 @@ const LoginForm: React.FC = () => {
       authService.saveSession(data);
       setSuccessMsg('Đăng nhập thành công! Đang chuyển hướng...');
       setTimeout(() => {
-        window.location.href = '/';
+        window.location.href = '/home';
       }, 1200);
     } catch (err: any) {
       const msg =
