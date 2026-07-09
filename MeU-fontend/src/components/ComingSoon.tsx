@@ -1,4 +1,7 @@
 import React from 'react';
+import barAreaImage from '../assets/images/bar-area.webp';
+import outdoorAreaImage from '../assets/images/outdoor-area.webp';
+import oddLogoImage from '../assets/images/odd-logo.webp';
 
 const ComingSoon: React.FC = () => {
   const scrollToBottom = () => {
@@ -10,14 +13,13 @@ const ComingSoon: React.FC = () => {
 
   return (
     <main className="w-full min-h-screen bg-[#F9F8F6] text-[#2C2A26] font-sans selection:bg-[#D45934] selection:text-white">
-
       {/* SECTION 1: HERO */}
       <section className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden font-sans">
 
         {/* Background Image & Dark Overlay */}
         <div className="absolute inset-0 z-0">
           <img
-            src="./src/assets/images/bar-area.webp" /* Thay thế bằng đường dẫn ảnh thực tế của bạn */
+            src={barAreaImage}
             alt="Odd Coffee Interior"
             className="w-full h-full object-cover"
           />
@@ -80,7 +82,7 @@ const ComingSoon: React.FC = () => {
         {/* CỘT TRÁI - HÌNH ẢNH */}
         <div className="w-full md:w-1/2 relative h-[50vh] md:h-[70vh]">
           <img
-            src="/src/assets/images/outdoor-area.webp"
+            src={outdoorAreaImage}
             alt="Odd Coffee Outdoor Area"
             className="absolute inset-0 w-full h-full object-cover object-center"
           />
@@ -173,7 +175,7 @@ const ComingSoon: React.FC = () => {
           <div className="mb-10">
             {/* Bạn cần thay thế src bằng hình ảnh logo dạng tròn có chữ uốn cong của Odd Coffee */}
             <img
-              src="./src/assets/images/odd-logo.webp"
+              src={oddLogoImage}
               alt="Odd Coffee Logo"
               className="w-40 md:w-48 h-auto object-contain mx-auto"
             />
