@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import cafeBarImg from '../assets/images/cafeBar.jpg';
 
 const ComingSoon: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -115,7 +116,7 @@ const ComingSoon: React.FC = () => {
       <div
         className="w-full md:w-1/2 h-[50vh] md:h-screen bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url('./src/assets/images/cafeBar.jpg')",
+          backgroundImage: `url(${cafeBarImg})`,
         }}
       ></div>
       
