@@ -19,9 +19,51 @@ const ComingSoon: React.FC = () => {
 
   const validateEmail = (val: string) => {
     const t = val.trim();
+
+    // 1. Empty check
     if (!t) return 'Please enter your email address.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t)) return 'Please enter a valid email (e.g. name@gmail.com).';
-    if (val.length > 50) return 'Email must not exceed 50 characters.';
+
+    // 2. Length check
+    if (t.length > 50) return 'Email must not exceed 50 characters.';
+
+    // 3. Must contain exactly one @
+    const atParts = t.split('@');
+    if (atParts.length !== 2) return 'Please enter a valid email (e.g. name@gmail.com).';
+
+    const [local, domain] = atParts;
+
+    // ── LOCAL PART RULES ──────────────────────────────────
+    // 4. Local part must not be empty
+    if (!local) return 'Please enter a valid email (e.g. name@gmail.com).';
+
+    // 5. Must start with a letter or digit (no leading dashes, dots, underscores)
+    if (!/^[a-zA-Z0-9]/.test(local))
+      return 'Email must start with a letter or number (e.g. name@gmail.com).';
+
+    // 6. Must end with a letter or digit (no trailing specials)
+    if (!/[a-zA-Z0-9]$/.test(local))
+      return 'Email local part must end with a letter or number.';
+
+    // 7. Only allow: a-z A-Z 0-9 . _ -
+    if (!/^[a-zA-Z0-9._-]+$/.test(local))
+      return 'Email contains invalid characters. Only letters, digits, ".", "_", "-" are allowed.';
+
+    // 8. No consecutive special characters (e.g. "..", "--", ".-", "-_")
+    if (/[._-]{2,}/.test(local))
+      return 'Email must not contain consecutive special characters (e.g. "..", "--").';
+
+    // ── DOMAIN PART RULES ─────────────────────────────────
+    // 9. Domain must not be empty
+    if (!domain) return 'Please enter a valid email (e.g. name@gmail.com).';
+
+    // 10. Domain must have at least one dot and a valid TLD (≥ 2 chars)
+    if (!/^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/.test(domain))
+      return 'Please enter a valid email domain (e.g. gmail.com).';
+
+    // 11. Domain must not have consecutive dots
+    if (/\.{2,}/.test(domain))
+      return 'Email domain must not contain consecutive dots.';
+
     return '';
   };
 
