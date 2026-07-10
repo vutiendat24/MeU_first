@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import cafeBarImg from '../assets/images/cafeBar.jpg';
 
 const ComingSoon: React.FC = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  
+  const isLoggedIn = !!localStorage.getItem('access_token');
 
   // Hàm validate chi tiết của bạn
   const validateEmail = (val: string) => {
@@ -49,8 +52,24 @@ const ComingSoon: React.FC = () => {
       {/* LEFT SIDE - CONTENT PANEL */}
       <div className="w-full md:w-1/2 flex flex-col justify-between p-8 md:p-16 lg:p-24">
         
-        <div>
+        <div className="flex items-center justify-between w-full">
           <h1 className="text-4xl font-extrabold tracking-tighter">odd</h1>
+          <nav className="flex items-center gap-4">
+            {isLoggedIn ? (
+              <Link to="/home" className="text-sm font-semibold text-gray-700 hover:text-black hover:underline transition-all">
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link to="/login" className="text-sm font-semibold text-gray-700 hover:text-black hover:underline transition-all">
+                  Login
+                </Link>
+                <Link to="/register" className="text-sm font-semibold px-4 py-2 bg-black text-white rounded-none hover:bg-gray-800 transition-colors">
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </nav>
         </div>
 
         <div className="max-w-xl my-16 md:my-0">
